@@ -1,0 +1,239 @@
+{% style %}
+  .custom-collection-list-wrapper {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .ccl-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .ccl-section-title {
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 28px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #000;
+    margin: 0;
+  }
+  .ccl-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .ccl-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    width: 180px;
+    group: ccl-item;
+  }
+  .ccl-image-wrapper {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+    background-color: #eaeaea;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  .ccl-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .ccl-item:hover .ccl-image {
+    transform: scale(1.05);
+  }
+  .ccl-title {
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+    color: #333333;
+  }
+  .ccl-link-text {
+    font-family: var(--font-body--family, sans-serif);
+    font-size: 12px;
+    color: #666666;
+    transition: color 0.3s ease;
+  }
+  .ccl-item:hover .ccl-link-text {
+    color: #000000;
+  }
+
+  /* Mobile responsiveness */
+  @media screen and (max-width: 768px) {
+    .ccl-container {
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 15px;
+      gap: 20px;
+      /* Hide scrollbar but keep functionality */
+      scrollbar-width: none; 
+      -ms-overflow-style: none;
+    }
+    .ccl-container::-webkit-scrollbar {
+      display: none;
+    }
+    .ccl-item {
+      flex: 0 0 auto;
+      width: 140px;
+    }
+    .ccl-image-wrapper {
+      width: 120px;
+      height: 120px;
+    }
+    .ccl-title {
+      font-size: 12px;
+    }
+  }
+{% endstyle %}
+
+<div class="custom-collection-list-wrapper">
+  {% if section.settings.heading != blank %}
+    <div class="ccl-header">
+      <h2 class="ccl-section-title">{{ section.settings.heading }}</h2>
+    </div>
+  {% endif %}
+  <div class="ccl-container">
+    {% for block in section.blocks %}
+      <a href="{{ block.settings.link }}" class="ccl-item" {{ block.shopify_attributes }}>
+        <div class="ccl-image-wrapper">
+          {% if block.settings.image != blank %}
+            <img src="{{ block.settings.image | image_url: width: 400 }}" alt="{{ block.settings.title }}" class="ccl-image" loading="lazy">
+          {% else %}
+            {{ 'collection-1' | placeholder_svg_tag: 'ccl-image' }}
+          {% endif %}
+        </div>
+        {% if block.settings.title != blank %}
+          <h3 class="ccl-title">{{ block.settings.title | newline_to_br }}</h3>
+        {% endif %}
+        {% if block.settings.link_text != blank %}
+          <div class="ccl-link-text">{{ block.settings.link_text }}</div>
+        {% endif %}
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Collection List",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by Category"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#F6F3F0"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Collection Image"
+        },
+        {
+          "type": "textarea",
+          "id": "title",
+          "label": "Title",
+          "default": "MEN'S\nCOLLECTION"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "Link Text",
+          "default": "Explore &rarr;"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Collection List",
+      "blocks": [
+        {
+          "type": "collection",
+          "settings": {
+            "title": "MEN'S\nCOLLECTION"
+          }
+        },
+        {
+          "type": "collection",
+          "settings": {
+            "title": "WOMEN'S\nCOLLECTION"
+          }
+        },
+        {
+          "type": "collection",
+          "settings": {
+            "title": "UNISEX\nCOLLECTION"
+          }
+        },
+        {
+          "type": "collection",
+          "settings": {
+            "title": "GIFT SETS\nCOLLECTION"
+          }
+        },
+        {
+          "type": "collection",
+          "settings": {
+            "title": "NEW\nARRIVALS"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

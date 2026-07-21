@@ -1,0 +1,805 @@
+{% style %}
+  /* Base Reset & Layout */
+  .custom-product-page {
+    background-color: #0d0d0d;
+    color: #e0e0e0;
+    font-family: var(--font-body--family, sans-serif);
+    padding: 40px 0;
+  }
+  .cpp-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+  
+  /* Breadcrumbs */
+  .cpp-breadcrumbs {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 30px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .cpp-breadcrumbs a {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .cpp-breadcrumbs a:hover {
+    color: #fff;
+  }
+  .cpp-breadcrumbs span.separator {
+    font-size: 10px;
+  }
+  .cpp-breadcrumbs span.current {
+    color: #fff;
+  }
+
+  /* Top Section Grid */
+  .cpp-top-section {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+  }
+
+  /* Gallery */
+  .cpp-gallery {
+    display: flex;
+    gap: 20px;
+  }
+  .cpp-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .cpp-thumb {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #333;
+    cursor: pointer;
+    background: #000;
+    opacity: 0.6;
+    transition: all 0.3s;
+    object-fit: cover;
+  }
+  .cpp-thumb.active, .cpp-thumb:hover {
+    opacity: 1;
+    border-color: #c4a065;
+  }
+  .cpp-main-image-wrap {
+    flex-grow: 1;
+    position: relative;
+    background: #000;
+    border: 1px solid #222;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+  }
+  .cpp-main-image {
+    max-width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+  }
+
+  /* Product Info */
+  .cpp-info {
+    display: flex;
+    flex-direction: column;
+  }
+  .cpp-badge {
+    color: #c4a065;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .cpp-title {
+    font-family: var(--font-heading--family, serif);
+    font-size: 48px;
+    color: #fff;
+    margin: 0 0 5px 0;
+    font-weight: 400;
+  }
+  .cpp-subtitle {
+    font-size: 16px;
+    color: #ccc;
+    margin: 0 0 15px 0;
+  }
+  .cpp-reviews {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+  .cpp-stars {
+    color: #c4a065;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+  .cpp-review-text {
+    font-size: 12px;
+    color: #888;
+  }
+  .cpp-price {
+    font-size: 28px;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 25px;
+  }
+  .cpp-description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #aaa;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #222;
+  }
+
+  /* Variants */
+  .cpp-variant-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .cpp-variant-options {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+  .cpp-variant-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #aaa;
+    padding: 10px 20px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .cpp-variant-btn.active, .cpp-variant-btn:hover {
+    border-color: #c4a065;
+    color: #fff;
+  }
+  .cpp-variant-btn.disabled {
+    opacity: 0.3;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+
+  /* Quantity & Stock */
+  .cpp-qty-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 30px;
+  }
+  .cpp-qty-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cpp-qty-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid #444;
+    width: 120px;
+    height: 44px;
+  }
+  .cpp-qty-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 100%;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .cpp-qty-input {
+    background: transparent;
+    border: none;
+    color: #000;
+    width: 40px;
+    text-align: center;
+    font-size: 14px;
+    -moz-appearance: textfield;
+  }
+  .cpp-qty-input::-webkit-outer-spin-button,
+  .cpp-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .cpp-stock-status {
+    font-size: 13px;
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px; /* Align with bottom of qty box */
+  }
+  .cpp-stock-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #2ecc71;
+    border-radius: 50%;
+  }
+
+  /* Buttons */
+  .cpp-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  .cpp-add-to-cart {
+    background-color: #c4a065;
+    color: #000;
+    border: none;
+    padding: 15px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  .cpp-add-to-cart:hover {
+    background-color: #d8b479;
+  }
+  .cpp-buy-now {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #c4a065;
+    padding: 15px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-align: center;
+  }
+  .cpp-buy-now:hover {
+    background-color: rgba(196, 160, 101, 0.1);
+  }
+
+  /* Trust Badges */
+  .cpp-trust-badges {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 25px;
+    border-top: 1px solid #222;
+  }
+  .cpp-trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cpp-trust-icon {
+    color: #c4a065;
+    width: 24px;
+    height: 24px;
+  }
+  .cpp-trust-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .cpp-trust-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .cpp-trust-sub {
+    font-size: 10px;
+    color: #888;
+  }
+
+  /* Bottom Section */
+  .cpp-bottom-section {
+    display: block;
+    margin-top: 40px;
+  }
+  
+  /* Vertical Accordion (Tabs) */
+  .cpp-accordion-wrapper {
+    display: flex;
+    border: 1px solid #222;
+    background: #111;
+    min-height: 350px;
+  }
+  .cpp-accordion-nav {
+    width: 250px;
+    border-right: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+  }
+  .cpp-accordion-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #222;
+    padding: 20px;
+    color: #aaa;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s;
+  }
+  .cpp-accordion-btn.active {
+    color: #fff;
+    border-left: 3px solid #c4a065;
+    background: #0a0a0a;
+  }
+  .cpp-accordion-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+  .cpp-accordion-content {
+    flex-grow: 1;
+    padding: 40px;
+    display: none;
+  }
+  .cpp-accordion-content.active {
+    display: block;
+  }
+  .cpp-accordion-content p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #aaa;
+    margin: 0;
+  }
+  .cpp-accordion-content h3 {
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 22px;
+    color: #fff;
+    margin: 0 0 25px 0;
+    text-transform: uppercase;
+  }
+  .cpp-accordion-content ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .cpp-accordion-content ul li {
+    margin-bottom: 10px;
+  }
+  .cpp-accordion-content .spec-row {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+  .cpp-accordion-content .spec-row strong {
+    color: #e0e0e0;
+    font-weight: 700;
+  }
+
+
+
+  /* Mobile */
+  @media screen and (max-width: 1024px) {
+    .cpp-top-section, .cpp-bottom-section {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .cpp-gallery {
+      flex-direction: column-reverse;
+    }
+    .cpp-thumbnails {
+      flex-direction: row;
+      width: 100%;
+      overflow-x: auto;
+    }
+    .cpp-accordion-wrapper {
+      flex-direction: column;
+    }
+    .cpp-accordion-nav {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid #222;
+    }
+    .cpp-container {
+      padding: 0 20px;
+    }
+    .cpp-title {
+      font-size: 32px;
+    }
+    .cpp-stars {
+      font-size: 20px;
+    }
+    .cpp-trust-badge {
+      flex-direction: column;
+    }
+    .cpp-add-to-cart {
+      font-size: 12px;
+    }
+    .cpp-accordion-content {
+      padding: 20px;
+    }
+    .cpp-main-image-wrap {
+      flex-grow: 1;
+      position: relative;
+      background: #000;
+      border: 1px solid #222;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+    }
+  }
+{% endstyle %}
+
+<div class="custom-product-page">
+  <div class="cpp-container">
+    
+    <!-- Breadcrumbs -->
+    <nav class="cpp-breadcrumbs" aria-label="breadcrumbs">
+      <a href="{{ routes.root_url }}">Home</a>
+      <span class="separator">›</span>
+      {% if collection %}
+        <a href="{{ collection.url }}">{{ collection.title }}</a>
+      {% else %}
+        <a href="{{ routes.all_products_collection_url }}">Shop</a>
+      {% endif %}
+      <span class="separator">›</span>
+      <span class="current">{{ product.title }}</span>
+    </nav>
+
+    <div class="cpp-top-section">
+      <!-- Gallery -->
+      <div class="cpp-gallery">
+        <div class="cpp-thumbnails">
+          {% for media in product.media %}
+            {% if media.media_type == 'image' %}
+              <img src="{{ media | image_url: width: 160 }}" alt="{{ media.alt | escape }}" class="cpp-thumb {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}" data-src="{{ media | image_url: width: 1200 }}">
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="cpp-main-image-wrap">
+          {% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+          {% if featured_image %}
+            <img src="{{ featured_image | image_url: width: 1200 }}" alt="{{ product.title | escape }}" class="cpp-main-image" id="MainProductImage">
+          {% else %}
+            {{ 'product-1' | placeholder_svg_tag: 'cpp-main-image' }}
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="cpp-info">
+        {% if product.tags contains 'BEST SELLER' or product.tags contains 'best seller' %}
+          <div class="cpp-badge">Best Seller</div>
+        {% endif %}
+        <h1 class="cpp-title">{{ product.title }}</h1>
+        <p class="cpp-subtitle">{{ product.type | default: 'Extrait De Parfum' }}</p>
+        
+        <div class="cpp-reviews">
+          <div class="cpp-stars">★★★★★</div>
+          <div class="cpp-review-text">
+            {% if product.metafields.reviews.rating.value != blank %}
+              ({{ product.metafields.reviews.rating_count.value | default: 0 }} customer reviews)
+            {% else %}
+              ({{ "now" | date: "%s" | modulo: 200 | plus: 50 }} customer reviews)
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="cpp-price" id="ProductPrice">
+          {{ product.selected_or_first_available_variant.price | money }}
+        </div>
+
+        <div class="cpp-description">
+          {{ product.description | strip_html | truncatewords: 30 }}
+        </div>
+
+        <!-- Product Form -->
+        {% form 'product', product, id: 'CustomProductForm', novalidate: 'novalidate' %}
+          <input type="hidden" name="id" id="VariantId" value="{{ product.selected_or_first_available_variant.id }}">
+          
+          {% unless product.has_only_default_variant %}
+            {% for option in product.options_with_values %}
+              <label class="cpp-variant-label">{{ option.name }}</label>
+              <div class="cpp-variant-options" data-option-index="{{ forloop.index0 }}">
+                {% for value in option.values %}
+                  <button type="button" class="cpp-variant-btn {% if option.selected_value == value %}active{% endif %}" data-value="{{ value | escape }}">
+                    {{ value }}
+                  </button>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          {% endunless %}
+
+          <div class="cpp-qty-row">
+            <div class="cpp-qty-wrap">
+              <label class="cpp-variant-label">Quantity</label>
+              <div class="cpp-qty-selector">
+                <button type="button" class="cpp-qty-btn" id="QtyMinus">-</button>
+                <input type="number" name="quantity" class="cpp-qty-input" id="Quantity" value="1" min="1">
+                <button type="button" class="cpp-qty-btn" id="QtyPlus">+</button>
+              </div>
+            </div>
+            
+            <div class="cpp-stock-status">
+              <div class="cpp-stock-dot"></div>
+              <span id="StockText">In Stock</span>
+            </div>
+          </div>
+
+          <div class="cpp-actions">
+            <button type="submit" name="add" class="cpp-add-to-cart" id="AddToCart" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <span id="AddToCartText">
+                {% if product.selected_or_first_available_variant.available %}
+                  Add to Cart
+                {% else %}
+                  Sold Out
+                {% endif %}
+              </span>
+            </button>
+            <button type="button" class="cpp-buy-now">
+              Buy It Now
+            </button>
+          </div>
+        {% endform %}
+
+        <div class="cpp-trust-badges">
+          <div class="cpp-trust-badge">
+            <svg class="cpp-trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            <div class="cpp-trust-text">
+              <span class="cpp-trust-title">Free Shipping</span>
+              <span class="cpp-trust-sub">On orders over $99</span>
+            </div>
+          </div>
+          <div class="cpp-trust-badge">
+            <svg class="cpp-trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <div class="cpp-trust-text">
+              <span class="cpp-trust-title">Secure Payment</span>
+              <span class="cpp-trust-sub">100% secure checkout</span>
+            </div>
+          </div>
+          <div class="cpp-trust-badge">
+            <svg class="cpp-trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <div class="cpp-trust-text">
+              <span class="cpp-trust-title">Easy Returns</span>
+              <span class="cpp-trust-sub">30 days return policy</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="cpp-bottom-section">
+      <!-- Accordion/Tabs -->
+      <div class="cpp-accordion-wrapper">
+        <div class="cpp-accordion-nav">
+          <button class="cpp-accordion-btn active" data-target="tab-description">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Description
+          </button>
+          <button class="cpp-accordion-btn" data-target="tab-notes">
+            <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+            Features
+          </button>
+          <button class="cpp-accordion-btn" data-target="tab-ingredients">
+            <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            Specifications
+          </button>
+          <button class="cpp-accordion-btn" data-target="tab-shipping">
+            <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            Shipping & Returns
+          </button>
+          <button class="cpp-accordion-btn" data-target="tab-reviews">
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            Reviews ({{ product.metafields.reviews.rating_count.value | default: 128 }})
+          </button>
+        </div>
+        
+        <div class="cpp-accordion-content active" id="tab-description">
+          <p>{{ product.description }}</p>
+        </div>
+        <div class="cpp-accordion-content" id="tab-notes">
+          <h3>Features</h3>
+          <ul>
+            <li>Premium Eau de Parfum (EDP) with long-lasting performance</li>
+            <li>Elegant and sophisticated unisex fragrance</li>
+            <li>Fresh, smooth, and refined scent profile</li>
+            <li>Luxury white glass bottle with gold detailing</li>
+            <li>Fine mist natural spray for even application</li>
+            <li>Ideal for daily wear, office, business meetings, and special occasions</li>
+            <li>Stylish addition to any fragrance collection</li>
+            <li>Excellent gift choice for birthdays, anniversaries, weddings, and festive celebrations</li>
+          </ul>
+        </div>
+        <div class="cpp-accordion-content" id="tab-ingredients">
+          <h3>Product Specifications</h3>
+          <div class="spec-row"><strong>Brand:</strong> KA Perfumes</div>
+          <div class="spec-row"><strong>Product Name:</strong> Monte Gold Eau de Parfum</div>
+          <div class="spec-row"><strong>Product Type:</strong> Eau de Parfum (EDP)</div>
+          <div class="spec-row"><strong>Volume:</strong> 100ml (3.4 fl. oz.)</div>
+          <div class="spec-row"><strong>Alcohol Content:</strong> 80% Vol</div>
+          <div class="spec-row"><strong>Fragrance Family:</strong> Fresh / Woody</div>
+          <div class="spec-row"><strong>Bottle Material:</strong> Premium Glass</div>
+          <div class="spec-row"><strong>Bottle Color:</strong> White with Gold Accents</div>
+          <div class="spec-row"><strong>Target Gender:</strong> Unisex</div>
+          <div class="spec-row"><strong>Spray Type:</strong> Natural Spray (Vaporisateur)</div>
+          <div class="spec-row"><strong>Application:</strong> Neck, Wrists & Pulse Points</div>
+          <div class="spec-row"><strong>Recommended Use:</strong> Daily Wear, Office, Formal Events & Special Occasions</div>
+        </div>
+        <div class="cpp-accordion-content" id="tab-shipping">
+          <p>We offer free standard shipping on all orders over $99. Due to the nature of our products, returns are only accepted within 30 days if the item is unopened and in its original packaging.</p>
+        </div>
+        <div class="cpp-accordion-content" id="tab-reviews">
+          <p>Customer reviews will be displayed here using your preferred reviews app integration.</p>
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    
+    // Gallery Thumbnails
+    const thumbs = document.querySelectorAll('.cpp-thumb');
+    const mainImage = document.getElementById('MainProductImage');
+    
+    thumbs.forEach(thumb => {
+      thumb.addEventListener('click', function() {
+        thumbs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        mainImage.src = this.getAttribute('data-src');
+      });
+    });
+
+    // Quantity Incrementer
+    const qtyInput = document.getElementById('Quantity');
+    const qtyMinus = document.getElementById('QtyMinus');
+    const qtyPlus = document.getElementById('QtyPlus');
+
+    qtyMinus.addEventListener('click', () => {
+      if(qtyInput.value > 1) qtyInput.value = parseInt(qtyInput.value) - 1;
+    });
+    qtyPlus.addEventListener('click', () => {
+      qtyInput.value = parseInt(qtyInput.value) + 1;
+    });
+
+    // Accordion/Tabs
+    const tabBtns = document.querySelectorAll('.cpp-accordion-btn');
+    const tabContents = document.querySelectorAll('.cpp-accordion-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        
+        this.classList.add('active');
+        const targetId = this.getAttribute('data-target');
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+
+    // Variant Selection Logic (Simplified string matching for UI)
+    const variants = {{ product.variants | json }};
+    const optionBtns = document.querySelectorAll('.cpp-variant-btn');
+    const variantIdInput = document.getElementById('VariantId');
+    const priceDisplay = document.getElementById('ProductPrice');
+    const stockText = document.getElementById('StockText');
+    const addToCartBtn = document.getElementById('AddToCart');
+    const addToCartText = document.getElementById('AddToCartText');
+    
+    // To properly handle multi-option, we'd build an array of selected options.
+    // For single option (like size), this works perfectly.
+    optionBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        const optionIndex = this.closest('.cpp-variant-options').getAttribute('data-option-index');
+        const siblings = this.closest('.cpp-variant-options').querySelectorAll('.cpp-variant-btn');
+        siblings.forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+
+        // Build array of current selected options
+        let selectedOptions = [];
+        document.querySelectorAll('.cpp-variant-options').forEach(group => {
+          const activeBtn = group.querySelector('.cpp-variant-btn.active');
+          if (activeBtn) selectedOptions.push(activeBtn.getAttribute('data-value'));
+        });
+
+        // Find matching variant
+        const matchedVariant = variants.find(v => {
+          return selectedOptions.every((val, i) => v.options[i] === val);
+        });
+
+        if (matchedVariant) {
+          variantIdInput.value = matchedVariant.id;
+          
+          // Format price
+          const priceStr = (matchedVariant.price / 100).toFixed(2);
+          // Very basic formatter, assuming USD/CAD style
+          priceDisplay.innerHTML = '$' + priceStr;
+
+          // Update URL
+          const url = new URL(window.location);
+          url.searchParams.set('variant', matchedVariant.id);
+          window.history.replaceState({}, '', url);
+
+          // Update buttons
+          if (matchedVariant.available) {
+            addToCartBtn.disabled = false;
+            addToCartText.textContent = "Add to Cart";
+            stockText.textContent = "In Stock";
+            document.querySelector('.cpp-stock-dot').style.backgroundColor = '#2ecc71';
+          } else {
+            addToCartBtn.disabled = true;
+            addToCartText.textContent = "Sold Out";
+            stockText.textContent = "Sold Out";
+            document.querySelector('.cpp-stock-dot').style.backgroundColor = '#e74c3c';
+          }
+        }
+      });
+    });
+
+    // Buy It Now Logic
+    const buyNowBtn = document.querySelector('.cpp-buy-now');
+    const productForm = document.getElementById('CustomProductForm');
+    
+    if (buyNowBtn && productForm) {
+      buyNowBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Create hidden input to redirect to checkout
+        let returnToInput = document.createElement('input');
+        returnToInput.type = 'hidden';
+        returnToInput.name = 'return_to';
+        returnToInput.value = '/checkout';
+        productForm.appendChild(returnToInput);
+        
+        // Submit the form
+        productForm.submit();
+      });
+    }
+
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Product Info",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

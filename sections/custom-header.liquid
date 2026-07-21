@@ -1,0 +1,317 @@
+  {% style %}
+    .custom-header-wrapper {
+      background-color: {{ section.settings.bg_color }};
+      color: {{ section.settings.text_color }};
+      padding: 15px 40px;
+      font-family: var(--font-body--family);
+      box-sizing: border-box;
+    }
+
+    .custom-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .custom-header__top {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 0;
+    }
+
+    .ch-menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .ch-menu-toggle svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .ch-logo {
+      display: flex;
+      justify-content: center;
+    }
+
+    .ch-logo img {
+      max-height: {{ section.settings.logo_height }}px;
+      width: auto;
+    }
+
+    .ch-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .ch-action-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      color: inherit;
+      text-decoration: none;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+      transition: opacity 0.2s;
+    }
+
+    .ch-action-item:hover {
+      opacity: 1;
+      color: {{ section.settings.accent_color }};
+    }
+
+    .ch-action-item svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.5;
+    }
+
+    .ch-menu-close {
+      display: none;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 0;
+    }
+    .ch-menu-close svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .custom-header__bottom {
+      display: flex;
+      justify-content: center;
+    }
+
+    .ch-menu {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .ch-menu-item {
+      color: {{ section.settings.text_color }};
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+
+    .ch-menu-item:hover, .ch-menu-item.is-active {
+      color: {{ section.settings.accent_color }};
+    }
+
+    /* Mobile Styles */
+    @media screen and (max-width: 768px) {
+      .custom-header-wrapper {
+        padding: 15px 20px;
+      }
+      .custom-header__top {
+        grid-template-columns: auto 1fr auto;
+      }
+      .ch-menu-toggle {
+        display: block;
+      }
+      .ch-action-item:not(#cart-icon-custom) {
+        display: none !important;
+      }
+      .ch-menu-close {
+        display: block;
+      }
+      .custom-header__bottom {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 85%;
+        max-width: 320px;
+        height: 100vh;
+        background-color: {{ section.settings.bg_color }};
+        z-index: 1000;
+        padding-top: 60px;
+        padding-left: 30px;
+        padding-right: 30px;
+        transition: left 0.3s ease;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+      .custom-header__bottom.is-open {
+        left: 0;
+      }
+      .ch-menu {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 25px;
+        width: 100%;
+      }
+      .ch-menu-item {
+        font-size: 16px;
+      }
+    }
+  {% endstyle %}
+
+  <div class="custom-header-wrapper">
+    <div class="custom-header-inner">
+    <!-- Top Row -->
+    <div class="custom-header__top">
+      <!-- Left: Menu Toggle & Logo -->
+      <div style="display:flex; gap:15px; align-items:center;">
+        <button class="ch-menu-toggle" aria-label="Toggle Menu">
+          <svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18" stroke-linecap="round"/></svg>
+        </button>
+        <div class="ch-logo">
+          <a href="{{ routes.root_url }}">
+            {% if section.settings.logo != blank %}
+              <img src="{{ section.settings.logo | image_url }}" alt="Regent Scent" loading="eager">
+            {% else %}
+              <h2 style="margin:0; font-family:var(--font-heading--family); font-weight:var(--font-heading--weight); letter-spacing: 2px;">Regent Scent</h2>
+            {% endif %}
+          </a>
+        </div>
+      </div>
+
+      <!-- Center: Navigation (Menu) -->
+      <div class="custom-header__bottom">
+        <button class="ch-menu-close" aria-label="Close Menu">
+          <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/></svg>
+        </button>
+        <ul class="ch-menu">
+          {% for link in section.settings.menu.links %}
+            <li>
+              <a href="{{ link.url }}" class="ch-menu-item {% if link.active %}is-active{% endif %}">
+                {{ link.title }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Right: Actions -->
+      <div class="ch-actions">
+        {% if shop.customer_accounts_enabled %}
+          <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="ch-action-item">
+            <svg viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Account</span>
+          </a>
+        {% endif %}
+
+        <a href="{{ section.settings.wishlist_url | default: '#' }}" class="ch-action-item">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span>Wishlist</span>
+        </a>
+
+        <a href="{{ routes.cart_url }}" class="ch-action-item" id="cart-icon-custom">
+          <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span>Cart {% if cart.item_count > 0 %}({{ cart.item_count }}){% else %}(0){% endif %}</span>
+        </a>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var toggle = document.querySelector('.ch-menu-toggle');
+      var closeBtn = document.querySelector('.ch-menu-close');
+      var menu = document.querySelector('.custom-header__bottom');
+      if (toggle && menu) {
+        toggle.addEventListener('click', function() {
+          menu.classList.add('is-open');
+        });
+      }
+      if (closeBtn && menu) {
+        closeBtn.addEventListener('click', function() {
+          menu.classList.remove('is-open');
+        });
+      }
+    });
+  </script>
+
+  {% schema %}
+  {
+    "name": "Custom Header",
+    "settings": [
+      {
+        "type": "color",
+        "id": "bg_color",
+        "label": "Background Color",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text Color",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "accent_color",
+        "label": "Accent Color (Hover/Active)",
+        "default": "#c4a065"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo Image"
+      },
+      {
+        "type": "range",
+        "id": "logo_height",
+        "label": "Logo Maximum Height",
+        "min": 20,
+        "max": 150,
+        "step": 5,
+        "default": 60,
+        "unit": "px"
+      },
+      {
+        "type": "link_list",
+        "id": "menu",
+        "label": "Main Menu"
+      },
+      {
+        "type": "url",
+        "id": "wishlist_url",
+        "label": "Wishlist URL",
+        "info": "Link for the Wishlist icon."
+      }
+    ],
+    "presets": [
+      {
+        "name": "Custom Header"
+      }
+    ],
+    "enabled_on": {
+      "groups": ["header"]
+    }
+  }
+  {% endschema %}

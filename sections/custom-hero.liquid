@@ -1,0 +1,342 @@
+{% style %}
+  .custom-hero {
+    position: relative;
+    width: calc(100% - 60px);
+    margin: 30px auto;
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: #000;
+  }
+  .ch-slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+  .ch-slide {
+    flex: 0 0 100%;
+    position: relative;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+  }
+  .ch-slide-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .ch-slide-bg-mobile {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+  .ch-slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 2;
+  }
+  .ch-slide-content {
+    position: relative;
+    z-index: 3;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 40px;
+  }
+  .ch-slide-text-wrapper {
+    max-width: 600px;
+    color: #ffffff;
+  }
+  .ch-slide-eyebrow {
+    color: #c4a065;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+  }
+  .ch-slide-heading {
+    font-family: var(--font-heading--family);
+    font-size: 64px;
+    line-height: 1.1;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  .ch-slide-subtext {
+    font-family: var(--font-body--family);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    color: #e0e0e0;
+  }
+  .ch-slide-btn {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #000000;
+    padding: 15px 30px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s, opacity 0.3s;
+  }
+  .ch-slide-btn:hover {
+    background-color: #f0f0f0;
+    opacity: 0.9;
+  }
+  
+  .ch-slider-nav {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    display: flex;
+    gap: 10px;
+  }
+  .ch-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .ch-dot.is-active {
+    background-color: #ffffff;
+    width: 12px;
+    height: 12px;
+    margin-top: -1px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .custom-hero {
+      width: calc(100% - 30px);
+      margin: 15px auto;
+      border-radius: 12px;
+    }
+    .ch-slide {
+      min-height: 500px;
+    }
+    .ch-slide-bg.has-mobile {
+      display: none;
+    }
+    .ch-slide-bg-mobile.is-mobile {
+      display: block;
+    }
+    .ch-slide-content {
+      padding: 20px;
+      text-align: center;
+    }
+    .ch-slide-text-wrapper {
+      margin: 0 auto;
+    }
+    .ch-slide-heading {
+      font-size: 40px;
+    }
+  }
+{% endstyle %}
+
+<div class="custom-hero" data-section-id="{{ section.id }}" data-autoplay="{{ section.settings.auto_rotate }}" data-speed="{{ section.settings.slide_speed | times: 1000 }}">
+  <div class="ch-slides" id="ch-slides-{{ section.id }}">
+    {% for block in section.blocks %}
+      <div class="ch-slide" {{ block.shopify_attributes }}>
+        {% if block.settings.image != blank %}
+          <img src="{{ block.settings.image | image_url: width: 2000 }}" alt="{{ block.settings.heading }}" class="ch-slide-bg {% if block.settings.mobile_image != blank %}has-mobile{% endif %}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+          {% if block.settings.mobile_image != blank %}
+            <img src="{{ block.settings.mobile_image | image_url: width: 800 }}" alt="{{ block.settings.heading }}" class="ch-slide-bg-mobile is-mobile" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+          {% endif %}
+        {% else %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'ch-slide-bg' }}
+        {% endif %}
+        
+        <div class="ch-slide-overlay"></div>
+        
+        <div class="ch-slide-content">
+          <div class="ch-slide-text-wrapper">
+            {% if block.settings.eyebrow != blank %}
+              <div class="ch-slide-eyebrow">{{ block.settings.eyebrow }}</div>
+            {% endif %}
+            {% if block.settings.heading != blank %}
+              <h2 class="ch-slide-heading">{{ block.settings.heading }}</h2>
+            {% endif %}
+            {% if block.settings.subtext != blank %}
+              <div class="ch-slide-subtext">{{ block.settings.subtext }}</div>
+            {% endif %}
+            {% if block.settings.btn_label != blank and block.settings.btn_link != blank %}
+              <a href="{{ block.settings.btn_link }}" class="ch-slide-btn">{{ block.settings.btn_label }}</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if section.blocks.size > 1 %}
+    <div class="ch-slider-nav" id="ch-nav-{{ section.id }}">
+      {% for block in section.blocks %}
+        <button class="ch-dot {% if forloop.first %}is-active{% endif %}" data-index="{{ forloop.index0 }}" aria-label="Go to slide {{ forloop.index }}"></button>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% if section.blocks.size > 1 %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var hero = document.querySelector('[data-section-id="{{ section.id }}"]');
+    if (!hero) return;
+    
+    var slidesContainer = hero.querySelector('.ch-slides');
+    var dots = hero.querySelectorAll('.ch-dot');
+    var totalSlides = {{ section.blocks.size }};
+    var currentIndex = 0;
+    var autoPlay = hero.getAttribute('data-autoplay') === 'true';
+    var speed = parseInt(hero.getAttribute('data-speed'), 10) || 5000;
+    var interval;
+
+    function goToSlide(index) {
+      if (index < 0) index = totalSlides - 1;
+      if (index >= totalSlides) index = 0;
+      currentIndex = index;
+      
+      slidesContainer.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+      
+      dots.forEach(function(dot, i) {
+        if (i === currentIndex) {
+          dot.classList.add('is-active');
+        } else {
+          dot.classList.remove('is-active');
+        }
+      });
+    }
+
+    dots.forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        var index = parseInt(this.getAttribute('data-index'), 10);
+        goToSlide(index);
+        resetInterval();
+      });
+    });
+
+    function startInterval() {
+      if (autoPlay) {
+        interval = setInterval(function() {
+          goToSlide(currentIndex + 1);
+        }, speed);
+      }
+    }
+
+    function resetInterval() {
+      clearInterval(interval);
+      startInterval();
+    }
+
+    startInterval();
+  });
+</script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom Hero Slider",
+  "settings": [
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Image Overlay Opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 30,
+      "unit": "%"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_rotate",
+      "label": "Auto-rotate slides",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "slide_speed",
+      "label": "Slide speed",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 5,
+      "unit": "s"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Desktop Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile Image (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow Text",
+          "default": "CRAFTED FOR MEMORIES"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Find Your Signature Scent"
+        },
+        {
+          "type": "textarea",
+          "id": "subtext",
+          "label": "Subtext",
+          "default": "Timeless fragrances crafted with the finest ingredients for every moment that matters."
+        },
+        {
+          "type": "text",
+          "id": "btn_label",
+          "label": "Button Label",
+          "default": "SHOP COLLECTION"
+        },
+        {
+          "type": "url",
+          "id": "btn_link",
+          "label": "Button Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Hero Slider",
+      "blocks": [
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

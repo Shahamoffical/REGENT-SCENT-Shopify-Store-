@@ -1,0 +1,305 @@
+{% style %}
+  .cc-layout {
+    max-width: 1600px;
+    margin: 40px auto;
+    padding: 0 40px;
+    display: flex;
+    gap: 50px;
+    font-family: var(--font-body--family, sans-serif);
+    color: #111;
+  }
+  
+  /* Sidebar */
+  .cc-sidebar {
+    width: 250px;
+    flex-shrink: 0;
+  }
+  
+  .cc-filter-group {
+    border-bottom: 1px solid #eee;
+    padding: 20px 0;
+  }
+  .cc-filter-group:first-child {
+    padding-top: 0;
+  }
+  
+  .cc-filter-heading {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .cc-filter-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .cc-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #444;
+  }
+  
+  .cc-checkbox input {
+    margin-right: 10px;
+    accent-color: #000;
+  }
+  
+  .cc-price-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .cc-price-range input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  
+  /* Main Content */
+  .cc-main {
+    flex-grow: 1;
+    min-width: 0; /* prevents flex blowout */
+  }
+  
+  .cc-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    font-size: 13px;
+    color: #666;
+  }
+  
+  .cc-sort-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .cc-sort-wrapper select {
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    color: #111;
+    cursor: pointer;
+    font-size: 13px;
+    outline: none;
+  }
+  
+  .cc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+  }
+  
+  /* Mobile Styles */
+  @media screen and (max-width: 1024px) {
+    .cc-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @media screen and (max-width: 768px) {
+    .cc-layout {
+      flex-direction: column;
+      padding: 0 20px;
+      gap: 20px;
+    }
+    .cc-sidebar {
+      width: 100%;
+    }
+    .cc-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    .cc-topbar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .cc-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* Loading state */
+  .cc-main.is-loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+{% endstyle %}
+
+{%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+
+<div class="cc-layout" id="CollectionPageMain">
+  <aside class="cc-sidebar">
+    <form id="CollectionFiltersForm" class="cc-sidebar-form">
+      {%- for filter in collection.filters -%}
+        <div class="cc-filter-group">
+          <h3 class="cc-filter-heading">{{ filter.label }} <span class="cc-toggle"></span></h3>
+          <div class="cc-filter-content">
+            {%- case filter.type -%}
+              {%- when 'boolean' or 'list' -%}
+                <ul class="cc-filter-list">
+                  {%- for value in filter.values -%}
+                    <li>
+                      <label class="cc-checkbox">
+                        <input type="checkbox"
+                          name="{{ value.param_name }}"
+                          value="{{ value.value }}"
+                          {% if value.active %}checked{% endif %}
+                          {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                        >
+                        <span>{{ value.label }} ({{ value.count }})</span>
+                      </label>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- when 'price_range' -%}
+                <div class="cc-price-range">
+                  <input name="{{ filter.min_value.param_name }}" id="Filter-{{ filter.label }}-{{ forloop.index }}" {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %} type="number" placeholder="0" min="0" max="{{ filter.range_max | money_without_currency | replace: ',', '' }}">
+                  <span> - </span>
+                  <input name="{{ filter.max_value.param_name }}" id="Filter-{{ filter.label }}-{{ forloop.index }}" {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"{% endif %} type="number" placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}" min="0" max="{{ filter.range_max | money_without_currency | replace: ',', '' }}">
+                </div>
+            {%- endcase -%}
+          </div>
+        </div>
+      {%- endfor -%}
+      <input type="hidden" name="sort_by" value="{{ sort_by }}">
+    </form>
+  </aside>
+
+  <main class="cc-main" id="ProductGridContainer">
+    {% paginate collection.products by section.settings.products_per_page %}
+      <div class="cc-topbar">
+        <div class="cc-results-count">
+          Showing {{ paginate.current_offset | plus: 1 }}-{% if paginate.next %}{{ paginate.current_offset | plus: paginate.page_size }}{% else %}{{ paginate.items }}{% endif %} of {{ paginate.items }} results
+        </div>
+        <div class="cc-sort-wrapper">
+          <label for="SortBy">Sort by:</label>
+          <select name="sort_by" id="SortBy" form="CollectionFiltersForm">
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == sort_by %}selected="selected"{% endif %}>{{ option.name }}</option>
+            {%- endfor -%}
+          </select>
+        </div>
+      </div>
+
+      <div class="cc-grid">
+        {% for product in collection.products %}
+          {% render 'custom-collection-product-card', product: product %}
+        {% else %}
+          <p>No products found matching your filters.</p>
+        {% endfor %}
+      </div>
+      
+      {%- if paginate.pages > 1 -%}
+        <div style="margin-top:40px;text-align:center;">
+          {{ paginate | default_pagination }}
+        </div>
+      {%- endif -%}
+    {% endpaginate %}
+  </main>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.getElementById('CollectionFiltersForm');
+    const sortSelect = document.getElementById('SortBy');
+    
+    function renderPage(searchParams) {
+      document.querySelector('.cc-main').classList.add('is-loading');
+      
+      const url = `${window.location.pathname}?${searchParams}`;
+      
+      fetch(url)
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          
+          document.getElementById('CollectionPageMain').innerHTML = doc.getElementById('CollectionPageMain').innerHTML;
+          history.replaceState(null, '', url);
+          
+          // Re-bind events since DOM was replaced
+          bindEvents();
+        })
+        .catch(err => console.error(err))
+        .finally(() => {
+          const main = document.querySelector('.cc-main');
+          if (main) main.classList.remove('is-loading');
+        });
+    }
+
+    function bindEvents() {
+      const form = document.getElementById('CollectionFiltersForm');
+      if (!form) return;
+      
+      // Update hidden sort input when select changes
+      const select = document.getElementById('SortBy');
+      if (select) {
+        select.addEventListener('change', function(e) {
+          const hiddenSort = form.querySelector('input[name="sort_by"]');
+          if (hiddenSort) hiddenSort.value = e.target.value;
+          const formData = new FormData(form);
+          const searchParams = new URLSearchParams(formData).toString();
+          renderPage(searchParams);
+        });
+      }
+      
+      // Listen for form inputs
+      form.addEventListener('change', function(e) {
+        if(e.target.id === 'SortBy') return; // Handled above
+        const formData = new FormData(form);
+        const searchParams = new URLSearchParams(formData).toString();
+        renderPage(searchParams);
+      });
+    }
+    
+    bindEvents();
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Main Collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 12
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@theme"
+    },
+    {
+      "type": "@app"
+    }
+  ]
+}
+{% endschema %}

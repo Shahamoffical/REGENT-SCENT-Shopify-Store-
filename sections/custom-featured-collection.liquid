@@ -1,0 +1,368 @@
+{% style %}
+  .custom-fc-wrapper {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--font-body--family, sans-serif);
+  }
+  .cfc-container {
+    max-width: 1280px; /* Fit 5 items comfortably */
+    margin: 0 auto;
+  }
+  .cfc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+  }
+  .cfc-title {
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+    color: #333333;
+  }
+  .cfc-link {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #333333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.3s;
+  }
+  .cfc-link:hover {
+    color: #c4a065;
+  }
+
+  .cfc-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+  }
+  
+  .cfc-card {
+    background-color: #fcfcfc;
+    border-radius: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .cfc-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .cfc-image-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1.1;
+    background-color: #eaeaea;
+    position: relative;
+    overflow: hidden;
+  }
+  .cfc-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cfc-info {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  .cfc-product-title {
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+    color: #000;
+    letter-spacing: 1.25px;
+    line-height: 1.3;
+  }
+  .cfc-product-subtitle {
+    font-size: 11px;
+    color: #666;
+    margin: 0 0 8px 0;
+  }
+  .cfc-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 15px;
+  }
+  .cfc-stars {
+    color: #c4a065;
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+  .cfc-rating-count {
+    font-size: 10px;
+    color: #666;
+  }
+
+  .cfc-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+  }
+  .cfc-price {
+    font-weight: 700;
+    font-size: 12px;
+    color: #000;
+  }
+  .cfc-add-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+    color: #333;
+  }
+  .cfc-add-btn svg {
+    width: 12px;
+    height: 12px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .cfc-add-btn:hover {
+    background: #c4a065;
+    border-color: #c4a065;
+    color: #fff;
+  }
+
+  /* Responsive styling */
+  @media screen and (max-width: 1200px) {
+    .cfc-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  @media screen and (max-width: 900px) {
+    .cfc-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .cfc-header {
+      border-bottom: none;
+      margin-bottom: 10px;
+    }
+    .cfc-grid {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 15px;
+      padding-bottom: 15px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .cfc-grid::-webkit-scrollbar {
+      display: none;
+    }
+    .cfc-card {
+      flex: 0 0 160px;
+    }
+    .cfc-product-subtitle {
+      font-size: 10px;
+    }
+    .cfc-price {
+      font-size: 11px;
+    }
+    .cfc-stars {
+      color: #c4a065;
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+  }
+
+  .cfc-add-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+    color: #333;
+  }
+
+  .cfc-add-btn svg {
+    width: 40px;
+    height: 25px;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    fill: none;
+  }
+{% endstyle %}
+
+<div class="custom-fc-wrapper">
+  <div class="cfc-container">
+    <div class="cfc-header">
+      <h2 class="cfc-title">{{ section.settings.title }}</h2>
+      {% if section.settings.link_url != blank %}
+        <a href="{{ section.settings.link_url }}" class="cfc-link">
+          {{ section.settings.link_label }} &rarr;
+        </a>
+      {% endif %}
+    </div>
+
+    <div class="cfc-grid">
+      {% assign collection = collections[section.settings.collection] %}
+      {% if collection != blank and collection.products_count > 0 %}
+        {% for product in collection.products limit: section.settings.products_to_show %}
+          <a href="{{ product.url }}" class="cfc-card">
+            <div class="cfc-image-wrapper">
+              <img src="{{ product.featured_image | image_url: width: 400 }}" alt="{{ product.title }}" class="cfc-image" loading="lazy">
+            </div>
+            <div class="cfc-info">
+              <h3 class="cfc-product-title">{{ product.title }}</h3>
+              
+              <p class="cfc-product-subtitle">
+                {% if product.vendor != blank %}
+                  Regent Scent
+                {% else %}
+                  Extrait De Parfum
+                {% endif %}
+              </p>
+
+              <div class="cfc-rating">
+                {% assign rating = product.metafields.reviews.rating.value | default: 5 %}
+                {% assign review_count = product.metafields.reviews.rating_count | default: 85 %}
+                <div class="cfc-stars">
+                  {% for i in (1..5) %}
+                    {% if i <= rating %}&#9733;{% else %}&#9734;{% endif %}
+                  {% endfor %}
+                </div>
+                <span class="cfc-rating-count">({{ review_count }})</span>
+              </div>
+
+              <div class="cfc-bottom">
+                <span class="cfc-price">{{ product.price | money }}</span>
+                <button class="cfc-add-btn" aria-label="Add to cart" onclick="event.preventDefault(); window.location.href='{{ product.url }}';">
+                  <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                </button>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      {% else %}
+        <!-- Placeholder items when no collection is selected -->
+        {% for i in (1..5) %}
+          <div class="cfc-card">
+            <div class="cfc-image-wrapper">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'cfc-image' }}
+            </div>
+            <div class="cfc-info">
+              <h3 class="cfc-product-title">Sample Product</h3>
+              <p class="cfc-product-subtitle">Extrait De Parfum</p>
+              <div class="cfc-rating">
+                <div class="cfc-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <span class="cfc-rating-count">(124)</span>
+              </div>
+              <div class="cfc-bottom">
+                <span class="cfc-price">$89.00</span>
+                <button class="cfc-add-btn" aria-label="Add to cart">
+                  <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Best Sellers",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#F6F3F0"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "BEST SELLERS"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Link Label",
+      "default": "VIEW ALL"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link URL"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 1,
+      "default": 5,
+      "label": "Maximum products to show"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Best Sellers"
+    }
+  ]
+}
+{% endschema %}

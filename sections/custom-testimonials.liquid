@@ -1,0 +1,319 @@
+{% style %}
+  .custom-testi-wrapper {
+    background-color: {{ section.settings.bg_color }};
+    padding: {{ section.settings.padding_top }}px 20px {{ section.settings.padding_bottom }}px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: var(--font-body--family, sans-serif);
+  }
+  .ct-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .ct-title {
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 0 0 40px 0;
+    color: #333333;
+  }
+
+  /* Slider Layout */
+  .ct-slider-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  .ct-slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    padding-bottom: 20px; /* Space for shadows/scrolling */
+  }
+  .ct-slider::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* Card */
+  .ct-card {
+    flex: 0 0 calc(33.333% - 14px); /* 3 cards visible on desktop */
+    scroll-snap-align: center;
+    background-color: {{ section.settings.card_color }};
+    border-radius: 8px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    box-sizing: border-box;
+  }
+  
+  .ct-stars {
+    color: #c4a065;
+    font-size: 16px;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+  }
+
+  .ct-quote {
+    font-family: var(--font-body--family, sans-serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: #444;
+    margin: 0 0 30px 0;
+    flex-grow: 1; /* Pushes author to bottom if text lengths vary */
+  }
+
+  .ct-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .ct-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #ccc;
+  }
+  
+  .ct-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  /* Pagination Dots */
+  .ct-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .ct-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #d1d1d1;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    transition: background-color 0.3s;
+  }
+  .ct-dot.active {
+    background-color: #c4a065;
+  }
+
+  /* Responsive Styling */
+  @media screen and (max-width: 900px) {
+    .ct-card {
+      flex: 0 0 calc(50% - 10px); /* 2 cards on tablet */
+    }
+  }
+  @media screen and (max-width: 600px) {
+    .ct-card {
+      flex: 0 0 90%; /* 1 card on mobile, slight peeking */
+    }
+    .ct-quote {
+      font-size: 13px;
+    }
+  }
+{% endstyle %}
+
+<div class="custom-testi-wrapper" id="CustomTestimonials-{{ section.id }}">
+  <div class="ct-container">
+    {% if section.settings.title != blank %}
+      <h2 class="ct-title">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    <div class="ct-slider-wrapper">
+      <div class="ct-slider" id="Slider-{{ section.id }}">
+        {% for block in section.blocks %}
+          <div class="ct-card" {{ block.shopify_attributes }}>
+            <div class="ct-stars">
+              {% assign rating = block.settings.rating | times: 1 %}
+              {% for i in (1..5) %}
+                {% if i <= rating %}&#9733;{% else %}&#9734;{% endif %}
+              {% endfor %}
+            </div>
+            
+            <div class="ct-quote">"{{ block.settings.quote }}"</div>
+            
+            <div class="ct-author">
+              {% if block.settings.image != blank %}
+                <img src="{{ block.settings.image | image_url: width: 100 }}" alt="{{ block.settings.author }}" class="ct-avatar" loading="lazy">
+              {% else %}
+                {{ 'avatar' | placeholder_svg_tag: 'ct-avatar' }}
+              {% endif %}
+              <div class="ct-name">&mdash; {{ block.settings.author }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="ct-dots" id="Dots-{{ section.id }}">
+        {% for block in section.blocks %}
+          <button class="ct-dot {% if forloop.first %}active{% endif %}" aria-label="Go to slide {{ forloop.index }}" data-index="{{ forloop.index0 }}"></button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const slider = document.getElementById('Slider-{{ section.id }}');
+    const dots = document.querySelectorAll('#Dots-{{ section.id }} .ct-dot');
+    
+    if (!slider || dots.length === 0) return;
+
+    // Click dot to scroll
+    dots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const index = parseInt(dot.getAttribute('data-index'));
+        const cardWidth = slider.querySelector('.ct-card').offsetWidth;
+        const gap = parseInt(window.getComputedStyle(slider).gap) || 0;
+        
+        slider.scrollTo({
+          left: (cardWidth + gap) * index,
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Update dots on scroll
+    slider.addEventListener('scroll', () => {
+      const cardWidth = slider.querySelector('.ct-card').offsetWidth;
+      const gap = parseInt(window.getComputedStyle(slider).gap) || 0;
+      const scrollPosition = slider.scrollLeft;
+      
+      const activeIndex = Math.round(scrollPosition / (cardWidth + gap));
+      
+      dots.forEach((dot, index) => {
+        if (index === activeIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Custom Testimonials",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#F6F3F0"
+    },
+    {
+      "type": "color",
+      "id": "card_color",
+      "label": "Card Background",
+      "default": "#EBE3D9"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "WHAT OUR CUSTOMERS SAY"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "default": 60,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star Rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "default": "Absolutely love the scent! Long lasting and feels so premium."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Author Avatar"
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Author Name",
+          "default": "James R."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "Absolutely love the scent! Long lasting and feels so premium.",
+            "author": "James R."
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "The packaging is stunning and the fragrance is divine.",
+            "author": "Sophia L."
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "quote": "This is now my go-to fragrance brand. Highly recommend!",
+            "author": "Daniel M."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

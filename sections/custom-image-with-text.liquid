@@ -1,0 +1,342 @@
+{% style %}
+  .custom-iwt-wrapper {
+    background-color: {{ section.settings.bg_color }};
+    color: {{ section.settings.text_color }};
+    width: 100%;
+  }
+  .ciwt-container {
+    max-width: 1400px; /* Or 100% depending on if they want it edge-to-edge */
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .ciwt-image-col {
+    flex: 1 1 50%;
+    min-height: 400px;
+    position: relative;
+    background-color: #111;
+  }
+  .ciwt-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .ciwt-text-col {
+    flex: 1 1 50%;
+    padding: 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  /* Block typography styles */
+  .ciwt-eyebrow {
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #c4a065;
+    margin: 0 0 15px 0;
+  }
+  .ciwt-heading {
+    font-family: "Times New Roman", Times, serif; /* Or their specific serif font */
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0 0 25px 0;
+    color: {{ section.settings.text_color }};
+  }
+  .ciwt-text {
+    font-family: var(--font-body--family, sans-serif);
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0 0 35px 0;
+    max-width: 90%;
+  }
+  .ciwt-button {
+    display: inline-block;
+    background-color: #c4a065;
+    color: #000;
+    text-decoration: none;
+    padding: 12px 30px;
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+    margin-bottom: 50px;
+  }
+  .ciwt-button:hover {
+    background-color: #e6be7b;
+  }
+
+  /* Feature Icons Container */
+  .ciwt-features-container {
+    display: flex;
+    gap: 30px;
+    margin-top: auto; /* Pushes to bottom if flex container has extra space */
+  }
+  .ciwt-feature {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+  }
+  .ciwt-feature-icon {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .ciwt-feature-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: #c4a065;
+    stroke-width: 1.5;
+  }
+  .ciwt-feature-text {
+    font-family: var(--font-heading--family, sans-serif);
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+  }
+
+  /* Mobile responsiveness */
+  @media screen and (max-width: 900px) {
+    .ciwt-image-col {
+      flex: 1 1 100%;
+      min-height: 350px;
+    }
+    .ciwt-text-col {
+      flex: 1 1 100%;
+      padding: 40px 20px;
+    }
+    .ciwt-heading {
+      font-size: 32px;
+    }
+    .ciwt-features-container {
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .ciwt-feature {
+      flex: 1 1 100%;
+      flex-direction: row;
+      align-items: center;
+      gap: 15px;
+    }
+    .ciwt-feature-icon {
+      margin-bottom: 0;
+    }
+    .ciwt-button {
+      margin-bottom: 30px;
+    }
+  }
+{% endstyle %}
+
+<div class="custom-iwt-wrapper">
+  <div class="ciwt-container">
+    <div class="ciwt-image-col">
+      {% if section.settings.image != blank %}
+        <img src="{{ section.settings.image | image_url: width: 1200 }}" alt="{{ section.settings.image.alt }}" class="ciwt-image" loading="lazy">
+      {% else %}
+        {{ 'collection-2' | placeholder_svg_tag: 'ciwt-image' }}
+      {% endif %}
+    </div>
+
+    <div class="ciwt-text-col">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'eyebrow' %}
+            <p class="ciwt-eyebrow" {{ block.shopify_attributes }}>{{ block.settings.text }}</p>
+          {% when 'heading' %}
+            <h2 class="ciwt-heading" {{ block.shopify_attributes }}>{{ block.settings.heading | newline_to_br }}</h2>
+          {% when 'text' %}
+            <div class="ciwt-text" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+          {% when 'button' %}
+            {% if block.settings.button_link != blank and block.settings.button_label != blank %}
+              <a href="{{ block.settings.button_link }}" class="ciwt-button" {{ block.shopify_attributes }}>
+                {{ block.settings.button_label }}
+              </a>
+            {% endif %}
+        {% endcase %}
+      {% endfor %}
+
+      {% assign icon_blocks = section.blocks | where: 'type', 'feature_icon' %}
+      {% if icon_blocks.size > 0 %}
+        <div class="ciwt-features-container">
+          {% for block in icon_blocks %}
+            <div class="ciwt-feature" {{ block.shopify_attributes }}>
+              <div class="ciwt-feature-icon">
+                {% if block.settings.custom_svg != blank %}
+                  {{ block.settings.custom_svg }}
+                {% else %}
+                  <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                {% endif %}
+              </div>
+              <div class="ciwt-feature-text">{{ block.settings.text | newline_to_br }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Custom Image with Text",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "eyebrow",
+      "name": "Eyebrow Text",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "OUR SIGNATURE COLLECTION"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "heading",
+          "label": "Heading",
+          "default": "The Art of\nFine Perfumery"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Each fragrance is a masterpiece, blending rare ingredients and modern craftsmanship to create scents that leave a lasting impression.</p>"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "EXPLORE COLLECTION"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        }
+      ]
+    },
+    {
+      "type": "feature_icon",
+      "name": "Feature Icon",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "PREMIUM\nINGREDIENTS"
+        },
+        {
+          "type": "html",
+          "id": "custom_svg",
+          "label": "Custom SVG Code",
+          "info": "Paste raw SVG code here. If blank, a default icon is shown."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Image with Text",
+      "blocks": [
+        {
+          "type": "eyebrow"
+        },
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "button",
+          "settings": {
+            "button_link": "shopify:\/\/collections\/all"
+          }
+        },
+        {
+          "type": "feature_icon",
+          "settings": {
+            "text": "PREMIUM\nINGREDIENTS"
+          }
+        },
+        {
+          "type": "feature_icon",
+          "settings": {
+            "text": "LONG LASTING\nPERFORMANCE"
+          }
+        },
+        {
+          "type": "feature_icon",
+          "settings": {
+            "text": "CRAFTED WITH\nEXPERTISE"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
